@@ -13,7 +13,7 @@ function unwrapArray(arr) {
 }
 
 module.exports={
-	create:function(callback,options){
+	create:function(instance_port, options, callback){
 		if(options===undefined)options={};
 		if(options.phantomPath===undefined)options.phantomPath='phantomjs';
 		if(options.parameters===undefined)options.parameters={};
@@ -55,7 +55,7 @@ module.exports={
 					window.socket = socket;\n\
 				};\n\
 			</script></head><body></body></html>');
-		}).listen(function(){			
+		}).listen(instance_port, function(){			
 			var io=socketio.listen(server,{'log level':1});
 	
 			var port=server.address().port;
@@ -170,6 +170,7 @@ module.exports={
 						case 'pageSetDone':
 						case 'pageJsIncluded':
 						case 'cookieAdded':
+						case 'cookiesCleared':
 						case 'pageRendered':
 						case 'pageEventSent':
 						case 'pageFileUploaded':
@@ -198,6 +199,9 @@ module.exports={
 						},
 						addCookie: function(cookie, callback){
 							request(socket,[0,'addCookie', cookie],callbackOrDummy(callback));
+						},
+						clearCookies: function(callback){
+							request(socket,[0,'clearCookies'],callbackOrDummy(callback));
 						},
 						exit:function(callback){
 							phantom.removeListener('exit',prematureExitHandler); //an exit is no longer premature now
